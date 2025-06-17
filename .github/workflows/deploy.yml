@@ -26,6 +26,7 @@ jobs:
 
       - name: Install dependencies
         run: npm ci # package-lock.json を利用して依存関係をインストール (npm install でも可)
+        working-directory: metrics-viewer # ★この行を追加
 
       - name: Build project
         run: npm run build # プロジェクトのビルドコマンドを実行
