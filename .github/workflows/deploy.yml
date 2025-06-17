@@ -22,14 +22,15 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18' # プロジェクトで使用しているNode.jsのバージョンを指定してください
+          node-version: '20' # プロジェクトで使用しているNode.jsのバージョンを指定してください
 
       - name: Install dependencies
         run: npm ci # package-lock.json を利用して依存関係をインストール (npm install でも可)
-        working-directory: metrics-viewer # ★この行を追加
+        working-directory: metrics-viewer # ★ここを 'metrics-viewer' に修正
 
       - name: Build project
         run: npm run build # プロジェクトのビルドコマンドを実行
+        working-directory: metrics-viewer # ★ここを 'metrics-viewer' に修正
 
       # GitHub Pagesへのデプロイ
       - name: Deploy to GitHub Pages
