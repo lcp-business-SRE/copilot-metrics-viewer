@@ -21,6 +21,16 @@ GitHub OrganizationまたはEnterprise Accountの GitHub Copilot に関連する
   - CSV形式でのエクスポート
   - JSON形式でのエクスポート
 
+## .env ファイルの設定
+
+GitHub Copilot Metrics Viewerを使用するには、`.env`ファイルを設定する必要があります。
+以下の環境変数を設定してください。
+```env
+NUXT_GITHUB_TOKEN=<Copilot_のアクセスTOKEN>
+```
+アクセストークンは、GitHubの[Personal access tokens](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)を参照して作成してください。
+このトークンは、GitHub Copilot Metrics APIにアクセスするために必要です。
+
 ## ローカルサーバ構築
 
 ```bash
