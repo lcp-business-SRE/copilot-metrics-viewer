@@ -8,8 +8,8 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare",
-    "prepare": "nuxt prepare",
+    "postinstall": "npx nuxt prepare",  // ★ここを修正
+    "prepare": "npx nuxt prepare",       // ★ここも修正（一貫性のため）
     "typecheck": "nuxt typecheck",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
