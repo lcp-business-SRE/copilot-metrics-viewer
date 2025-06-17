@@ -1,0 +1,40 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main # main ブランチへのプッシュ時に自動デプロイ
+  workflow_dispatch: # 手動でワークフローを実行できるようにする
+
+jobs:
+  build_and_deploy_job:
+    runs-on: ubuntu-latest # ビルド環境を指定
+    name: Build and Deploy to GitHub Pages
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4 # リポジトリをチェックアウト
+        with:
+          submodules: true # 必要であればサブモジュールもチェックアウト
+          lfs: false # 必要であればLFSファイルも考慮
+
+      # ここからがGitHub Pages用のビルドステップです
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18' # プロジェクトで使用しているNode.jsのバージョンを指定してください
+
+      - name: Install dependencies
+        run: npm ci # package-lock.json を利用して依存関係をインストール (npm install でも可)
+
+      - name: Build project
+        run: npm run build # プロジェクトのビルドコマンドを実行
+
+      # GitHub Pagesへのデプロイ
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }} # GitHubが自動で提供するトークン
+          publish_dir: ./dist # ビルドされた静的ファイルがあるディレクトリを指定
+                              # 元のymlの output_location: "dist" に対応しています
+          # cname: example.com # カスタムドメインを設定する場合、コメントアウトを解除してドメインを指定
