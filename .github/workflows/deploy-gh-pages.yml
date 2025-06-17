@@ -21,30 +21,40 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22' # あなたのNuxt.jsプロジェクトのNode.jsバージョンに合わせる
+          node-version: '22' 
 
       - name: Install dependencies
-        # サブディレクトリでnpm installを実行
         run: npm install 
-        working-directory: ./metrics-viewer # ★ここを追加
+        working-directory: ./metrics-viewer
+
+      - name: Debug Node Modules Path # ★デバッグ用に追加
+        run: echo "NODE_PATH=$(npm root -g)" && echo "NPM_BIN_PATH=$(npm bin)"
+        working-directory: ./metrics-viewer
+
+      - name: Prepare Nuxt.js project (Explicitly calling via npm bin) # ★ここを修正
+        # node_modules/.bin/nuxt を直接実行してみる
+        run: |
+          # まず、npm install で生成されるローカルのバイナリのパスを取得
+          NPM_BIN=$(npm bin)
+          # そのパスを使って nuxt prepare を実行
+          $NPM_BIN/nuxt prepare
+        working-directory: ./metrics-viewer
+        # もし上記でダメなら、以下を試す:
+        # run: npx --yes nuxt prepare # --yes オプションを追加して確認プロンプトをスキップ
+        # run: node node_modules/nuxt/bin/nuxt.mjs prepare # Nuxt 3 の場合は直接バイナリを指定
 
       - name: Fetch GitHub Data at Build Time 
-        # サブディレクトリでスクリプトを実行
         run: node ./scripts/fetch-github-data.js
-        working-directory: ./metrics-viewer # ★ここを追加
+        working-directory: ./metrics-viewer
         env:
           NUXT_GITHUB_TOKEN: ${{ secrets.NUXT_GITHUB_TOKEN_SECRET }} 
 
       - name: Build Nuxt.js project
-        # サブディレクトリでnpm run buildを実行
         run: npm run build 
-        working-directory: ./metrics-viewer # ★ここを追加
+        working-directory: ./metrics-viewer
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          # デプロイするディレクトリもサブディレクトリ内のビルド成果物パスに変更
-          # 例: metrics-viewer/.output/public
-          publish_dir: ./metrics-viewer/.output/public # ★ここも修正
-          # cname: example.com # 必要であればカスタムドメインを設定
+          publish_dir: ./metrics-viewer/.output/public
