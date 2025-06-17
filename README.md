@@ -78,12 +78,17 @@ GitHub Copilot によって提案された行と提案の合計数に対する�
 - Total Active Users : アクティブユーザー数
   - GitHub Copilot を使用しているアクティブなユーザーの数を示します。これにより、チームや組織内での Copilot の利用状況を把握できます。
 
+![アクティブユーザ数](./assets/active-user.png)
+
 ### 言語別内訳分析
 
 - Language Breakdown : 言語別の利用状況
   - GitHub Copilot が提案したコード行数を言語ごとに分類し、どのプログラミング言語で最も多くの提案が行われているかを示します。これにより、特定の言語における Copilot の効果を分析できます。
 
 言語内訳分析タブには、過去28日間における各言語の承認済みプロンプト、承認済みコード行数、承認率（%）を示す表も表示されます。エントリは、承認済みコード行数の降順で並べ替えられています。
+
+![言語別内訳](./assets/language-breakdown.png)
+
 
 ### Copilot Chat Metrics
 
@@ -96,6 +101,8 @@ Copilot Chat Metrics タブでは、GitHub Copilot Chat の利用状況を分析
 - Total Turns Count : チャットの合計ターン数
   - ユーザーと Copilot Chat の間で行われた全てのやり取りの数を示します。これにより、チャットの活発度や利用頻度を把握できます。
   - 「ターン」には、ユーザーによる入力とCopilotからの応答の両方が含まれます。
+
+![承認されたチャットと合計ターン数](./assets/total-accep-turn.png)
 
 ### Total Active Copilot Chat Users
 
