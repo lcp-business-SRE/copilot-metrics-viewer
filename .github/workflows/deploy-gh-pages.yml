@@ -27,24 +27,30 @@ jobs:
         run: npm install 
         working-directory: ./metrics-viewer
 
-      # Debug Nuxt Binary Info ステップは残しておくと良いでしょう（情報収集のため）
-      - name: Debug Nuxt Binary Info
+      - name: Debug Nuxt Binary Info - Before chmod # ★★★ デバッグ強化 ★★★
         run: |
-          echo "--- Current Working Directory ---"
-          pwd
-          echo "--- PATH Environment Variable ---"
-          echo $PATH
-          echo "--- Contents of node_modules/.bin/ ---"
-          ls -la node_modules/.bin/ || echo "node_modules/.bin/ not found or empty."
-          echo "--- Permissions of nuxt binary (direct path) ---"
-          ls -l node_modules/.bin/nuxt || echo "nuxt binary not found at node_modules/.bin/nuxt"
-          echo "--- File type of nuxt binary ---"
-          file node_modules/.bin/nuxt || echo "file command failed or nuxt not found"
+          echo "--- Before chmod ---"
+          ls -la node_modules/.bin/nuxt || echo "nuxt binary not found before chmod"
+          file node_modules/.bin/nuxt || echo "file command failed or nuxt not found before chmod"
         working-directory: ./metrics-viewer
 
-      - name: Prepare Nuxt.js project (Direct shell execution) # ★★★ここを修正★★★
-        # nodeで直接実行するのではなく、シェルでそのまま実行
-        run: node_modules/.bin/nuxt prepare
+      - name: Grant execute permission to nuxt binary # ★★★ ここは残す ★★★
+        # 全てのユーザーに実行権限を付与 (ugo+x または a+x)
+        run: chmod a+x node_modules/.bin/nuxt
+        working-directory: ./metrics-viewer
+
+      - name: Debug Nuxt Binary Info - After chmod # ★★★ デバッグ強化 ★★★
+        run: |
+          echo "--- After chmod ---"
+          ls -la node_modules/.bin/nuxt || echo "nuxt binary not found after chmod"
+          file node_modules/.bin/nuxt || echo "file command failed or nuxt not found after chmod"
+        working-directory: ./metrics-viewer
+
+      - name: Prepare Nuxt.js project (Direct shell execution) # ★★★ ここで実行 ★★★
+        # シェルで直接実行
+        run: ./node_modules/.bin/nuxt prepare
+        # または、もし `bin` 内のシンボリックリンクが機能しない場合:
+        # run: node node_modules/nuxt/bin/nuxt.mjs prepare 
         working-directory: ./metrics-viewer
         
       - name: Fetch GitHub Data at Build Time 
