@@ -27,11 +27,8 @@ jobs:
         run: npm install 
         working-directory: ./metrics-viewer
 
-      - name: Grant execute permission to nuxt binary 
-        run: chmod +x node_modules/.bin/nuxt
-        working-directory: ./metrics-viewer
-
-      - name: Debug Nuxt Binary Info # ★★★ NEW DEBUG STEP ★★★
+      # Debug Nuxt Binary Info ステップは残しておくと良いでしょう（情報収集のため）
+      - name: Debug Nuxt Binary Info
         run: |
           echo "--- Current Working Directory ---"
           pwd
@@ -45,11 +42,9 @@ jobs:
           file node_modules/.bin/nuxt || echo "file command failed or nuxt not found"
         working-directory: ./metrics-viewer
 
-      - name: Explicitly Run Nuxt Prepare # ★★★ MODIFIED STEP ★★★
-        # Nuxt 3 のバイナリは通常 JavaScript ファイルなので、node で直接実行を試みる
-        run: node node_modules/.bin/nuxt prepare
-        # もし上記でダメなら、以下を試す（よりNuxt 3の内部バイナリに近い可能性）
-        # run: node node_modules/nuxt/bin/nuxt.mjs prepare
+      - name: Prepare Nuxt.js project (Direct shell execution) # ★★★ここを修正★★★
+        # nodeで直接実行するのではなく、シェルでそのまま実行
+        run: node_modules/.bin/nuxt prepare
         working-directory: ./metrics-viewer
         
       - name: Fetch GitHub Data at Build Time 
