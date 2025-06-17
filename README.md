@@ -17,14 +17,11 @@ GitHub OrganizationまたはEnterprise Accountの GitHub Copilot に関連する
 ## 機能
 
 - Copilotの利用状況のグラフ表示
-- 利用時間の集計
-- 利用頻度の分析
-- チームメンバーごとの利用状況の比較
-    - チームメンバーごとの利用時間の比較
-    - チームメンバーごとの利用頻度の比較
-- 利用状況のエクスポート機能
-  - CSV形式でのエクスポート
-  - JSON形式でのエクスポート
+- チームメンバーごとの利用状況
+- 言語別の利用状況
+- Copilot Chatの利用状況
+- Copilot の割り当てられたシート数の表示
+- Copilot アクティブユーザー数の表示
 
 ## .env ファイルの設定
 
@@ -38,7 +35,8 @@ NUXT_GITHUB_TOKEN=<Copilot_のアクセスTOKEN>
 
 ## ローカルサーバ構築
 
-```bash
+``` bash
+cd metrics-viewer
 # 必要なパッケージのインストール
 npm install
 # ローカルサーバの起動
