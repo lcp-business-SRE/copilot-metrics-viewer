@@ -3,12 +3,12 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main # main ブランチへのプッシュ時に自動デプロイ
-  workflow_dispatch: # 手動でワークフローを実行できるようにする
+      - main
+  workflow_dispatch:
 
 jobs:
   build_and_deploy_job:
-    runs-on: ubuntu-latest # ビルド環境を指定
+    runs-on: ubuntu-latest
     name: Build and Deploy to GitHub Pages
 
     steps:
@@ -24,19 +24,34 @@ jobs:
           node-version: '22'
 
       - name: Install dependencies
-        run: npm install # package.jsonのpostinstallがnpxで実行されるため、これでOK
+        run: npm install 
         working-directory: ./metrics-viewer
 
-      # 以下のステップは不要になります
-      # - name: Grant execute permission to nuxt binary 
-      #   run: chmod +x node_modules/.bin/nuxt
-      #   working-directory: ./metrics-viewer
+      - name: Grant execute permission to nuxt binary 
+        run: chmod +x node_modules/.bin/nuxt
+        working-directory: ./metrics-viewer
 
-      # 以下のステップも不要になります
-      # - name: Prepare Nuxt.js project (Explicitly calling npx) 
-      #   run: npx nuxt prepare
-      #   working-directory: ./metrics-viewer
+      - name: Debug Nuxt Binary Info # ★★★ NEW DEBUG STEP ★★★
+        run: |
+          echo "--- Current Working Directory ---"
+          pwd
+          echo "--- PATH Environment Variable ---"
+          echo $PATH
+          echo "--- Contents of node_modules/.bin/ ---"
+          ls -la node_modules/.bin/ || echo "node_modules/.bin/ not found or empty."
+          echo "--- Permissions of nuxt binary (direct path) ---"
+          ls -l node_modules/.bin/nuxt || echo "nuxt binary not found at node_modules/.bin/nuxt"
+          echo "--- File type of nuxt binary ---"
+          file node_modules/.bin/nuxt || echo "file command failed or nuxt not found"
+        working-directory: ./metrics-viewer
 
+      - name: Explicitly Run Nuxt Prepare # ★★★ MODIFIED STEP ★★★
+        # Nuxt 3 のバイナリは通常 JavaScript ファイルなので、node で直接実行を試みる
+        run: node node_modules/.bin/nuxt prepare
+        # もし上記でダメなら、以下を試す（よりNuxt 3の内部バイナリに近い可能性）
+        # run: node node_modules/nuxt/bin/nuxt.mjs prepare
+        working-directory: ./metrics-viewer
+        
       - name: Fetch GitHub Data at Build Time 
         run: node ./scripts/fetch-github-data.js
         working-directory: ./metrics-viewer
