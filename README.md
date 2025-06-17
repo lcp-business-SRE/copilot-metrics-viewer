@@ -9,6 +9,11 @@ GitHub Copilotの利用状況を確認するためのツールです。
 
 GitHub OrganizationまたはEnterprise Accountの GitHub Copilot に関連する様々なメトリクスをグラフ形式で表示します。これらの可視化は、データを明確に表現するように設計されており、GitHub Copilot の影響と導入状況を容易に理解・分析できます。このアプリケーションは、[GitHub Copilot Metrics API](https://docs.github.com/en/enterprise-cloud@latest/rest/copilot/copilot-metrics?apiVersion=2022-11-28)を利用しています。
 
+> [!NOTE]
+>   これは、GitHub Copilot の利用状況を可視化するためのツールであり、GitHub Copilot の機能そのものではありません。
+>   また、こちらのリポジトリをフォークして利用しています。
+>   [copilot-metrics-viewer](https://github.com/github-copilot-resources/copilot-metrics-viewer)
+
 ## 機能
 
 - Copilotの利用状況のグラフ表示
