@@ -1,0 +1,49 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main # main ブランチへのプッシュ時に自動デプロイ
+  workflow_dispatch: # 手動でワークフローを実行できるようにする
+
+jobs:
+  build_and_deploy_job:
+    runs-on: ubuntu-latest # ビルド環境を指定
+    name: Build and Deploy to GitHub Pages
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          lfs: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # あなたのNuxt.jsプロジェクトのNode.jsバージョンに合わせる
+
+      - name: Install dependencies
+        run: npm ci # または yarn install, pnpm install
+
+      - name: Fetch GitHub Data at Build Time # ★追加するステップ
+        # 上記で作成したスクリプトを実行
+        run: node ./scripts/fetch-github-data.js
+        env:
+          # GitHubシークレットとして登録したNUXT_GITHUB_TOKEN_SECRETを環境変数NUXT_GITHUB_TOKENとして渡す
+          NUXT_GITHUB_TOKEN: ${{ secrets.NUXT_GITHUB_TOKEN_SECRET }} 
+
+      - name: Build Nuxt.js project
+        # Nuxt.js のビルドコマンド
+        run: npm run build # または yarn build, pnpm build
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # Nuxt.js のビルド成果物が生成されるディレクトリを指定（通常は .output/public）
+          # もしSSRでなくSPAで完全に静的なHTML/CSS/JSとしてビルドされる場合
+          # nuxt.config.js の target: 'static' (Nuxt 2) または generate (Nuxt 3) の設定による
+          # Nuxt 3 の場合は通常 .output/public を指定
+          publish_dir: ./.output/public 
+          # cname: example.com # 必要であればカスタムドメインを設定
