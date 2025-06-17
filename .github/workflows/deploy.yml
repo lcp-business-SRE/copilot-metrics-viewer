@@ -3,7 +3,7 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main # main ブランチへのプッシュ時に自動デプロイ
+      - main # main ブランチへのプッシュ時に自動デプロイa
   workflow_dispatch: # 手動でワークフローを実行できるようにする
 
 jobs:
