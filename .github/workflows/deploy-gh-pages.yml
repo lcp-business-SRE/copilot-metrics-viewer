@@ -3,12 +3,12 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main # main ブランチへのプッシュ時に自動デプロイ
-  workflow_dispatch: # 手動でワークフローを実行できるようにする
+      - main
+  workflow_dispatch:
 
 jobs:
   build_and_deploy_job:
-    runs-on: ubuntu-latest # ビルド環境を指定
+    runs-on: ubuntu-latest
     name: Build and Deploy to GitHub Pages
 
     steps:
@@ -21,27 +21,24 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22' 
+          node-version: '22'
 
       - name: Install dependencies
         run: npm install 
         working-directory: ./metrics-viewer
 
-      - name: Debug Node Modules Path # ★デバッグ用に追加
-        run: echo "NODE_PATH=$(npm root -g)" && echo "NPM_BIN_PATH=$(npm bin)"
+      - name: Grant execute permission to nuxt binary # ★このステップを追加
+        run: chmod +x node_modules/.bin/nuxt
         working-directory: ./metrics-viewer
 
-      - name: Prepare Nuxt.js project (Explicitly calling via npm bin) # ★ここを修正
-        # node_modules/.bin/nuxt を直接実行してみる
-        run: |
-          # まず、npm install で生成されるローカルのバイナリのパスを取得
-          NPM_BIN=$(npm bin)
-          # そのパスを使って nuxt prepare を実行
-          $NPM_BIN/nuxt prepare
+      - name: Prepare Nuxt.js project (Explicitly calling npx) # ★このステップを維持
+        run: npx nuxt prepare
         working-directory: ./metrics-viewer
-        # もし上記でダメなら、以下を試す:
-        # run: npx --yes nuxt prepare # --yes オプションを追加して確認プロンプトをスキップ
-        # run: node node_modules/nuxt/bin/nuxt.mjs prepare # Nuxt 3 の場合は直接バイナリを指定
+        # もし package.json の postinstall を元の "nuxt prepare" に戻しているなら、
+        # このステップは不要になるはずですが、念のため残しておきます。
+        # または、package.json の postinstall を "npx nuxt prepare" のままにして、
+        # このステップは削除しても構いません。
+        # どちらか一方で "npx nuxt prepare" が実行されれば良いです。
 
       - name: Fetch GitHub Data at Build Time 
         run: node ./scripts/fetch-github-data.js
