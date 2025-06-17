@@ -1,0 +1,70 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build_and_deploy_job:
+    runs-on: ubuntu-latest
+    name: Build and Deploy to GitHub Pages
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          lfs: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm install 
+        working-directory: ./metrics-viewer
+
+      - name: Debug Nuxt Binary Info - Before chmod # ★★★ デバッグ強化 ★★★
+        run: |
+          echo "--- Before chmod ---"
+          ls -la node_modules/.bin/nuxt || echo "nuxt binary not found before chmod"
+          file node_modules/.bin/nuxt || echo "file command failed or nuxt not found before chmod"
+        working-directory: ./metrics-viewer
+
+      - name: Grant execute permission to nuxt binary # ★★★ ここは残す ★★★
+        # 全てのユーザーに実行権限を付与 (ugo+x または a+x)
+        run: chmod a+x node_modules/.bin/nuxt
+        working-directory: ./metrics-viewer
+
+      - name: Debug Nuxt Binary Info - After chmod # ★★★ デバッグ強化 ★★★
+        run: |
+          echo "--- After chmod ---"
+          ls -la node_modules/.bin/nuxt || echo "nuxt binary not found after chmod"
+          file node_modules/.bin/nuxt || echo "file command failed or nuxt not found after chmod"
+        working-directory: ./metrics-viewer
+
+      - name: Prepare Nuxt.js project (Direct shell execution) # ★★★ ここで実行 ★★★
+        # シェルで直接実行
+        run: ./node_modules/.bin/nuxt prepare
+        # または、もし `bin` 内のシンボリックリンクが機能しない場合:
+        # run: node node_modules/nuxt/bin/nuxt.mjs prepare 
+        working-directory: ./metrics-viewer
+        
+      - name: Fetch GitHub Data at Build Time 
+        run: node ./scripts/fetch-github-data.js
+        working-directory: ./metrics-viewer
+        env:
+          NUXT_GITHUB_TOKEN: ${{ secrets.NUXT_GITHUB_TOKEN_SECRET }} 
+
+      - name: Build Nuxt.js project
+        run: npm run build 
+        working-directory: ./metrics-viewer
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./metrics-viewer/.output/public

@@ -663,7 +663,7 @@ const _inlineRuntimeConfig = {
   "githubToken": "",
   "session": {
     "name": "nuxt-session",
-    "password": "7a9d4473e2a5427cae7a68215fdf5811",
+    "password": "170f1ec0f4bf45d38bfbb42f6a34ae35",
     "cookie": {
       "sameSite": "lax"
     },
