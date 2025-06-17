@@ -21,5 +21,11 @@ GitHub OrganizationまたはEnterprise Accountの GitHub Copilot に関連する
   - CSV形式でのエクスポート
   - JSON形式でのエクスポート
 
-## インストール
+## ローカルサーバ構築
 
+```bash
+# 必要なパッケージのインストール
+npm install
+# ローカルサーバの起動
+npm run dev
+```
