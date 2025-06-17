@@ -3,12 +3,12 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main
-  workflow_dispatch:
+      - main # main ブランチへのプッシュ時に自動デプロイ
+  workflow_dispatch: # 手動でワークフローを実行できるようにする
 
 jobs:
   build_and_deploy_job:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest # ビルド環境を指定
     name: Build and Deploy to GitHub Pages
 
     steps:
@@ -24,21 +24,18 @@ jobs:
           node-version: '22'
 
       - name: Install dependencies
-        run: npm install 
+        run: npm install # package.jsonのpostinstallがnpxで実行されるため、これでOK
         working-directory: ./metrics-viewer
 
-      - name: Grant execute permission to nuxt binary # ★このステップを追加
-        run: chmod +x node_modules/.bin/nuxt
-        working-directory: ./metrics-viewer
+      # 以下のステップは不要になります
+      # - name: Grant execute permission to nuxt binary 
+      #   run: chmod +x node_modules/.bin/nuxt
+      #   working-directory: ./metrics-viewer
 
-      - name: Prepare Nuxt.js project (Explicitly calling npx) # ★このステップを維持
-        run: npx nuxt prepare
-        working-directory: ./metrics-viewer
-        # もし package.json の postinstall を元の "nuxt prepare" に戻しているなら、
-        # このステップは不要になるはずですが、念のため残しておきます。
-        # または、package.json の postinstall を "npx nuxt prepare" のままにして、
-        # このステップは削除しても構いません。
-        # どちらか一方で "npx nuxt prepare" が実行されれば良いです。
+      # 以下のステップも不要になります
+      # - name: Prepare Nuxt.js project (Explicitly calling npx) 
+      #   run: npx nuxt prepare
+      #   working-directory: ./metrics-viewer
 
       - name: Fetch GitHub Data at Build Time 
         run: node ./scripts/fetch-github-data.js
